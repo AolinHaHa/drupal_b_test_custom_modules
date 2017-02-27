@@ -1,0 +1,106 @@
+<?php
+
+
+function display_course_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#display_course': {
+      $rtn_val = '<h3>' . t('About') . '</h3>';
+      $rtn_val .= '<p>' . t('***  check course database') . '</p>';
+      return $rtn_val;
+      break;
+    }
+  }
+}
+
+function display_course_menu(){
+	  $items = array();
+ 
+
+	  
+	 $items['course_display'] = array(
+	    'title'            => t('  D   '),
+	    'page callback'    => 'display_course_table',
+        'access callback'  => 'display_course_access',
+	    'access arguments' => array('access content'),
+	  );
+
+
+	  return $items;
+}
+
+function display_course_access() {
+
+	return TRUE;
+}
+
+
+function display_course_table() {
+	 header('Content-type: text/plain; charset=UTF-8');
+	 header('Content-Disposition: inline');
+
+	 $header = array('Course ID', 'Course name', 'Hours' );
+	 $rows = array();
+
+	 $rtn_val = '<table width=\'100&%\'>';
+	 $rtn_val .= '<tr>';
+	 
+	 foreach ($header as $key ) {
+ 	     $rtn_val .= '<th>' . $key . '</th>';
+	 }
+	 $rtn_val .= '</tr>';
+
+	 
+	 $query = db_select( 'course_info', 'q');
+  	 $query->fields('q', array('cid','coursename', 'hours'))
+  	 		->orderBy('cid','ASC');
+   	 $results = $query->execute();	     
+   	   
+     setlocale(LC_MONETARY, 'en_US');
+     
+     
+     while($record = $results->fetchAssoc()) {	
+     	$cid = $record['cid']; 		 	
+	 	$coursename = $record['coursename'];
+	 	$hours = $record['hours'];
+
+
+	    
+	    $rtn_val .= '<tr>';	     
+	    $rtn_val .= '<td>' . $cid .'</td>';   	
+	 	$rtn_val .= '<td>' . $coursename .'</td>';
+	 	$rtn_val .= '<td>' . $hours .'</td>';
+	    $rtn_val .= '</tr>';	     
+	 }
+
+	  $rtn_val .= '</table>';	 
+	 
+	  if (isset($num_deleted)) {
+	  	if ( $num_deleted > 0 ) {
+	  		$rtn_val .= '<table width=\'100&%\'>';
+	  		$rtn_val .= '<tr>';
+    			$rtn_val .= '<td>' . 'Records Deleted:' .'</td>';
+    			$rtn_val .= '<td>' . $num_deleted .'</td>';
+    			$rtn_val .= '</tr>';
+    			$rtn_val .= '</table>';
+    		}
+	  }
+	 
+	  return $rtn_val;
+}
+
+
+function display_course_cron() {
+	drupal_set_message(t('Don’t PANIC, Its just CRON!'), 'warning');
+}
+
+    
+
+
+function display_course_permission() {
+  return array(
+    'administer my module' => array(
+      'title' => t('Administer Search Course'),
+      'description' => t('Perform administration tasks for search course'),
+    ),
+  );
+}

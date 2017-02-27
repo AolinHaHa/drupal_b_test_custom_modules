@@ -1,0 +1,54 @@
+<?php
+function degree_select_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#degree_select': {
+      $rtn_val = '<h3>' . t('About') . '</h3>';
+      $rtn_val .= '<p>' . t('Degree selection.') . '</p>';
+      return $rtn_val;
+      break;
+    }
+  }
+}
+
+function degree_select_menu(){
+	 
+	 $items = array();
+ 	  
+	  //add_client_form
+  	  $items['degree_select'] = array(
+			'title' => 'Degree Selection',
+			'description' => 'Select/change degree selection',
+			//'page callback' => 'drupal_get_form',
+			'page arguments' => array('degree_select_form'), 
+			'access callback' =>  TRUE,
+			'access arguments' => array('access content'),
+			'weight' => 8,
+		 );
+
+	  		 
+	  return $items;
+}
+
+function degree_select_permission() {
+  return array(
+    'administer my module' => array(
+      'title' => t('Administer Search Student'),
+      'description' => t('Perform administration tasks for degree selection'),
+    ),
+  );
+}
+
+function degree_select_form($form,&$form_state){
+	$form['studentid'] = array(
+	'#type' => 'textfield',
+	'#title' => 'student id please',
+	'#size' => 20,
+	'#maxlength' => 10,
+	'#required' => TRUE, 
+	);
+	$form['submit_button'] = array(
+	'#type' => 'submit',
+	'#value' => t('Find!'),
+	);
+	return $form;
+}
